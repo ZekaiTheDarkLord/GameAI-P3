@@ -1,0 +1,255 @@
+cmake_minimum_required(VERSION 3.24)
+project(Project2)
+
+set(CMAKE_CXX_STANDARD 14)
+
+include_directories(Controller_AI_KevinDill/src)
+include_directories(Controller_UI/src)
+include_directories(external)
+include_directories(external/SDL2)
+include_directories(external/SDL2/include)
+include_directories(external/SDL2_image)
+include_directories(external/SDL2_image/include)
+include_directories(external/SDL2_ttf)
+include_directories(external/SDL2_ttf/include)
+include_directories(Game/src)
+include_directories(Interface/src)
+include_directories(Project2/Controller_AI_KevinDill/src)
+include_directories(Project2/Controller_UI/src)
+include_directories(Project2/external)
+include_directories(Project2/external/SDL2)
+include_directories(Project2/external/SDL2/include)
+include_directories(Project2/external/SDL2_image)
+include_directories(Project2/external/SDL2_image/include)
+include_directories(Project2/external/SDL2_ttf)
+include_directories(Project2/external/SDL2_ttf/include)
+include_directories(Project2/Game/src)
+include_directories(Project2/Interface/src)
+
+add_executable(Project2
+        Controller_AI_KevinDill/src/Controller_AI_KevinDill.cpp
+        Controller_AI_KevinDill/src/Controller_AI_KevinDill.h
+        Controller_UI/src/Controller_UI.cpp
+        Controller_UI/src/Controller_UI.h
+        external/SDL2/include/begin_code.h
+        external/SDL2/include/close_code.h
+        external/SDL2/include/SDL.h
+        external/SDL2/include/SDL_assert.h
+        external/SDL2/include/SDL_atomic.h
+        external/SDL2/include/SDL_audio.h
+        external/SDL2/include/SDL_bits.h
+        external/SDL2/include/SDL_blendmode.h
+        external/SDL2/include/SDL_clipboard.h
+        external/SDL2/include/SDL_config.h
+        external/SDL2/include/SDL_config_android.h
+        external/SDL2/include/SDL_config_iphoneos.h
+        external/SDL2/include/SDL_config_macosx.h
+        external/SDL2/include/SDL_config_minimal.h
+        external/SDL2/include/SDL_config_pandora.h
+        external/SDL2/include/SDL_config_psp.h
+        external/SDL2/include/SDL_config_windows.h
+        external/SDL2/include/SDL_config_winrt.h
+        external/SDL2/include/SDL_config_wiz.h
+        external/SDL2/include/SDL_copying.h
+        external/SDL2/include/SDL_cpuinfo.h
+        external/SDL2/include/SDL_egl.h
+        external/SDL2/include/SDL_endian.h
+        external/SDL2/include/SDL_error.h
+        external/SDL2/include/SDL_events.h
+        external/SDL2/include/SDL_filesystem.h
+        external/SDL2/include/SDL_gamecontroller.h
+        external/SDL2/include/SDL_gesture.h
+        external/SDL2/include/SDL_haptic.h
+        external/SDL2/include/SDL_hints.h
+        external/SDL2/include/SDL_joystick.h
+        external/SDL2/include/SDL_keyboard.h
+        external/SDL2/include/SDL_keycode.h
+        external/SDL2/include/SDL_loadso.h
+        external/SDL2/include/SDL_log.h
+        external/SDL2/include/SDL_main.h
+        external/SDL2/include/SDL_messagebox.h
+        external/SDL2/include/SDL_mouse.h
+        external/SDL2/include/SDL_mutex.h
+        external/SDL2/include/SDL_name.h
+        external/SDL2/include/SDL_opengl.h
+        external/SDL2/include/SDL_opengl_glext.h
+        external/SDL2/include/SDL_opengles.h
+        external/SDL2/include/SDL_opengles2.h
+        external/SDL2/include/SDL_opengles2_gl2.h
+        external/SDL2/include/SDL_opengles2_gl2ext.h
+        external/SDL2/include/SDL_opengles2_gl2platform.h
+        external/SDL2/include/SDL_opengles2_khrplatform.h
+        external/SDL2/include/SDL_pixels.h
+        external/SDL2/include/SDL_platform.h
+        external/SDL2/include/SDL_power.h
+        external/SDL2/include/SDL_quit.h
+        external/SDL2/include/SDL_rect.h
+        external/SDL2/include/SDL_render.h
+        external/SDL2/include/SDL_revision.h
+        external/SDL2/include/SDL_rwops.h
+        external/SDL2/include/SDL_scancode.h
+        external/SDL2/include/SDL_sensor.h
+        external/SDL2/include/SDL_shape.h
+        external/SDL2/include/SDL_stdinc.h
+        external/SDL2/include/SDL_surface.h
+        external/SDL2/include/SDL_system.h
+        external/SDL2/include/SDL_syswm.h
+        external/SDL2/include/SDL_test.h
+        external/SDL2/include/SDL_test_assert.h
+        external/SDL2/include/SDL_test_common.h
+        external/SDL2/include/SDL_test_compare.h
+        external/SDL2/include/SDL_test_crc32.h
+        external/SDL2/include/SDL_test_font.h
+        external/SDL2/include/SDL_test_fuzzer.h
+        external/SDL2/include/SDL_test_harness.h
+        external/SDL2/include/SDL_test_images.h
+        external/SDL2/include/SDL_test_log.h
+        external/SDL2/include/SDL_test_md5.h
+        external/SDL2/include/SDL_test_memory.h
+        external/SDL2/include/SDL_test_random.h
+        external/SDL2/include/SDL_thread.h
+        external/SDL2/include/SDL_timer.h
+        external/SDL2/include/SDL_touch.h
+        external/SDL2/include/SDL_types.h
+        external/SDL2/include/SDL_version.h
+        external/SDL2/include/SDL_video.h
+        external/SDL2/include/SDL_vulkan.h
+        external/SDL2_image/include/SDL_image.h
+        external/SDL2_ttf/include/SDL_ttf.h
+        Game/src/Building.cpp
+        Game/src/Building.h
+        Game/src/CrashLoyal.cpp
+        Game/src/Entity.cpp
+        Game/src/Entity.h
+        Game/src/Game.cpp
+        Game/src/Game.h
+        Game/src/Graphics.cpp
+        Game/src/Graphics.h
+        Game/src/HelperFunctions.h
+        Game/src/Mob.cpp
+        Game/src/Mob.h
+        Game/src/Mob_Swordsman.h
+        Game/src/Player.cpp
+        Game/src/Player.h
+        Interface/src/Constants.h
+        Interface/src/EntityStats.cpp
+        Interface/src/EntityStats.h
+        Interface/src/iController.h
+        Interface/src/iPlayer.cpp
+        Interface/src/iPlayer.h
+        Interface/src/Singleton.h
+        Interface/src/Vec2.cpp
+        Interface/src/Vec2.h
+        Project2/Controller_AI_KevinDill/src/Controller_AI_KevinDill.cpp
+        Project2/Controller_AI_KevinDill/src/Controller_AI_KevinDill.h
+        Project2/Controller_UI/src/Controller_UI.cpp
+        Project2/Controller_UI/src/Controller_UI.h
+        Project2/external/SDL2/include/begin_code.h
+        Project2/external/SDL2/include/close_code.h
+        Project2/external/SDL2/include/SDL.h
+        Project2/external/SDL2/include/SDL_assert.h
+        Project2/external/SDL2/include/SDL_atomic.h
+        Project2/external/SDL2/include/SDL_audio.h
+        Project2/external/SDL2/include/SDL_bits.h
+        Project2/external/SDL2/include/SDL_blendmode.h
+        Project2/external/SDL2/include/SDL_clipboard.h
+        Project2/external/SDL2/include/SDL_config.h
+        Project2/external/SDL2/include/SDL_config_android.h
+        Project2/external/SDL2/include/SDL_config_iphoneos.h
+        Project2/external/SDL2/include/SDL_config_macosx.h
+        Project2/external/SDL2/include/SDL_config_minimal.h
+        Project2/external/SDL2/include/SDL_config_pandora.h
+        Project2/external/SDL2/include/SDL_config_psp.h
+        Project2/external/SDL2/include/SDL_config_windows.h
+        Project2/external/SDL2/include/SDL_config_winrt.h
+        Project2/external/SDL2/include/SDL_config_wiz.h
+        Project2/external/SDL2/include/SDL_copying.h
+        Project2/external/SDL2/include/SDL_cpuinfo.h
+        Project2/external/SDL2/include/SDL_egl.h
+        Project2/external/SDL2/include/SDL_endian.h
+        Project2/external/SDL2/include/SDL_error.h
+        Project2/external/SDL2/include/SDL_events.h
+        Project2/external/SDL2/include/SDL_filesystem.h
+        Project2/external/SDL2/include/SDL_gamecontroller.h
+        Project2/external/SDL2/include/SDL_gesture.h
+        Project2/external/SDL2/include/SDL_haptic.h
+        Project2/external/SDL2/include/SDL_hints.h
+        Project2/external/SDL2/include/SDL_joystick.h
+        Project2/external/SDL2/include/SDL_keyboard.h
+        Project2/external/SDL2/include/SDL_keycode.h
+        Project2/external/SDL2/include/SDL_loadso.h
+        Project2/external/SDL2/include/SDL_log.h
+        Project2/external/SDL2/include/SDL_main.h
+        Project2/external/SDL2/include/SDL_messagebox.h
+        Project2/external/SDL2/include/SDL_mouse.h
+        Project2/external/SDL2/include/SDL_mutex.h
+        Project2/external/SDL2/include/SDL_name.h
+        Project2/external/SDL2/include/SDL_opengl.h
+        Project2/external/SDL2/include/SDL_opengl_glext.h
+        Project2/external/SDL2/include/SDL_opengles.h
+        Project2/external/SDL2/include/SDL_opengles2.h
+        Project2/external/SDL2/include/SDL_opengles2_gl2.h
+        Project2/external/SDL2/include/SDL_opengles2_gl2ext.h
+        Project2/external/SDL2/include/SDL_opengles2_gl2platform.h
+        Project2/external/SDL2/include/SDL_opengles2_khrplatform.h
+        Project2/external/SDL2/include/SDL_pixels.h
+        Project2/external/SDL2/include/SDL_platform.h
+        Project2/external/SDL2/include/SDL_power.h
+        Project2/external/SDL2/include/SDL_quit.h
+        Project2/external/SDL2/include/SDL_rect.h
+        Project2/external/SDL2/include/SDL_render.h
+        Project2/external/SDL2/include/SDL_revision.h
+        Project2/external/SDL2/include/SDL_rwops.h
+        Project2/external/SDL2/include/SDL_scancode.h
+        Project2/external/SDL2/include/SDL_sensor.h
+        Project2/external/SDL2/include/SDL_shape.h
+        Project2/external/SDL2/include/SDL_stdinc.h
+        Project2/external/SDL2/include/SDL_surface.h
+        Project2/external/SDL2/include/SDL_system.h
+        Project2/external/SDL2/include/SDL_syswm.h
+        Project2/external/SDL2/include/SDL_test.h
+        Project2/external/SDL2/include/SDL_test_assert.h
+        Project2/external/SDL2/include/SDL_test_common.h
+        Project2/external/SDL2/include/SDL_test_compare.h
+        Project2/external/SDL2/include/SDL_test_crc32.h
+        Project2/external/SDL2/include/SDL_test_font.h
+        Project2/external/SDL2/include/SDL_test_fuzzer.h
+        Project2/external/SDL2/include/SDL_test_harness.h
+        Project2/external/SDL2/include/SDL_test_images.h
+        Project2/external/SDL2/include/SDL_test_log.h
+        Project2/external/SDL2/include/SDL_test_md5.h
+        Project2/external/SDL2/include/SDL_test_memory.h
+        Project2/external/SDL2/include/SDL_test_random.h
+        Project2/external/SDL2/include/SDL_thread.h
+        Project2/external/SDL2/include/SDL_timer.h
+        Project2/external/SDL2/include/SDL_touch.h
+        Project2/external/SDL2/include/SDL_types.h
+        Project2/external/SDL2/include/SDL_version.h
+        Project2/external/SDL2/include/SDL_video.h
+        Project2/external/SDL2/include/SDL_vulkan.h
+        Project2/external/SDL2_image/include/SDL_image.h
+        Project2/external/SDL2_ttf/include/SDL_ttf.h
+        Project2/Game/src/Building.cpp
+        Project2/Game/src/Building.h
+        Project2/Game/src/CrashLoyal.cpp
+        Project2/Game/src/Entity.cpp
+        Project2/Game/src/Entity.h
+        Project2/Game/src/Game.cpp
+        Project2/Game/src/Game.h
+        Project2/Game/src/Graphics.cpp
+        Project2/Game/src/Graphics.h
+        Project2/Game/src/HelperFunctions.h
+        Project2/Game/src/Mob.cpp
+        Project2/Game/src/Mob.h
+        Project2/Game/src/Mob_Swordsman.h
+        Project2/Game/src/Player.cpp
+        Project2/Game/src/Player.h
+        Project2/Interface/src/Constants.h
+        Project2/Interface/src/EntityStats.cpp
+        Project2/Interface/src/EntityStats.h
+        Project2/Interface/src/iController.h
+        Project2/Interface/src/iPlayer.cpp
+        Project2/Interface/src/iPlayer.h
+        Project2/Interface/src/Singleton.h
+        Project2/Interface/src/Vec2.cpp
+        Project2/Interface/src/Vec2.h)
