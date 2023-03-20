@@ -1,4 +1,4 @@
-# Install script for directory: E:/Northeastern/CS4150/Project3/Project2
+# Install script for directory: E:/Northeastern/github/Project2
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "E:/Northeastern/CS4150/Project3/Project2/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "E:/Northeastern/github/Project2/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

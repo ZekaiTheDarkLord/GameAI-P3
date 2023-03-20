@@ -767,8 +767,8 @@
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "E:/Northeastern/CS4150/Project3/Project2/cmake-build-debug",
-		"source" : "E:/Northeastern/CS4150/Project3/Project2"
+		"build" : "E:/Northeastern/github/Project2/cmake-build-debug",
+		"source" : "E:/Northeastern/github/Project2"
 	},
 	"version" : 
 	{
