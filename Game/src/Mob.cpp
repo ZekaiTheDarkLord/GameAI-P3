@@ -44,7 +44,7 @@ void Mob::tick(float deltaTSec) {
         m_chargeSpringAttack = m_hiddenTime >= 2.f;
 
         if (isHidden()) {
-            std::cout << "Hide: " << m_hiddenTime << std::endl;
+            // std::cout << "Hide: " << m_hiddenTime << std::endl;
             m_hiddenTime += deltaTSec;
         } else {
             m_hiddenTime = 0.f;

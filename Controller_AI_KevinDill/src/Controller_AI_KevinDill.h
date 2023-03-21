@@ -91,7 +91,7 @@ private:
     std::vector<Entity *> getEnemyShouldTakeCare(std::vector<Entity *> entity);
 
     // defense from a enemy depends on the exist ally mobs
-    void dealWithOneEnemy(const std::vector<Entity*>& allyMobs, const std::vector<Entity*>& enemyMobs,Entity* enemy);
+    bool dealWithOneEnemy(const std::vector<Entity*>& allyMobs, const std::vector<Entity*>& enemyMobs,Entity* enemy);
 
     // generate a random number in a range
     static float randomInRange(float lowerBound, float upperBound);
