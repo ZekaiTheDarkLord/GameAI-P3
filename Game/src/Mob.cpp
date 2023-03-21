@@ -192,7 +192,7 @@ void Mob::move(float deltaTSec) {
 
             m_hiddenTime = 0.f;
 
-            std::cout << "spring and attack an enemy";
+            // std::cout << "spring and attack an enemy";
 
             return;
         }
@@ -252,7 +252,7 @@ void Mob::move(float deltaTSec) {
 
                 // if the rogue can hide bedhind a building
                 if (hideBuilding) {
-                    std::cout << "hide from building\n";
+                    // std::cout << "hide from building\n";
                     moveAround(enemiesInSight(), hidePosition, hideSize / 2, moveDist, hideGiant, deltaTSec, moveVec);
 
                     // the rogue should hide on the back side of the buildin
@@ -330,7 +330,7 @@ void Mob::move(float deltaTSec) {
                     moveVec = closestHidePos - m_Pos;
                     distRemaining = moveVec.normalize();
 
-                    std::cout << "move Vec set. " << moveVec.x << " " << moveVec.y << std::endl;
+                    // std::cout << "move Vec set. " << moveVec.x << " " << moveVec.y << std::endl;
                 }
             }
         }

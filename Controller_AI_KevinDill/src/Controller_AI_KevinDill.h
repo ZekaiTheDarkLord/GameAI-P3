@@ -46,7 +46,8 @@ private:
     bool isWaiting = false;
     int defenseCount = 0;
     int defenseDuration = 30;
-    int desireToAttack = 2;
+    int desireToAttack = 1;
+    bool firstTick = true;
 
     // the enemy that already treated by AI, what if the enemy is in the list but no mobs nearby to deal with it?
     std::set<Entity*> enemyTreated = std::set<Entity*>();

@@ -48,6 +48,10 @@ void Entity::tick(float deltaTSec) {
             m_chargeSpringAttack = false;
         }
 
+        if (m_Stats.getName() == "Rogue") {
+            std::cout << "rogue attack" << std::endl;
+        }
+
         char buff[200];
         snprintf(buff, 200, "%s %s attacks %s %s for %d damage.\n",
                  m_bNorth ? "North" : "South",

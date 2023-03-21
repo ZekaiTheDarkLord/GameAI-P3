@@ -31,12 +31,18 @@ void Controller_AI_KevinDill::tick(float deltaTSec, const std::vector<Entity *> 
     assert(m_pPlayer);
     srand(time(nullptr));
 
+    if (firstTick) {
+        desireToAttack = rand() % 3 + 1;
+        std::cout << "start AI. Choose deisre pattern first: " << desireToAttack << std::endl;
+        firstTick = false;
+    }
+
     // defense in random tick
     if (defenseCount >= defenseDuration) {
         // std::cout << "defense" << std::endl;
         playGame(allyMobs, enemyMobs);
         defenseCount = 0;
-        defenseDuration = rand() % 15 + 5;
+        defenseDuration = rand() % 25 + 10;
     } else {
         defenseCount++;
     }
@@ -48,16 +54,13 @@ void Controller_AI_KevinDill::playGame(std::vector<Entity *> allyMobs, std::vect
 
     if (isWaiting) {
         if (!enemyMobs.empty()) {
+            std::cout << "Decision: AI stop waiting because there is enemy placed." << std::endl;
             std::cout << "------------End Waiting-----------" << std::endl;
             isWaiting = false;
         }
         else {
-            std::cout << "Decision: AI stop waiting because there is enemy placed." << std::endl;
-            return;
-        }
-
-        if (isWaiting) {
             if (m_pPlayer->getElixir() >= 5) {
+                std::cout << "Decision: AI step waiting because there is enough elixir" << std::endl;
                 std::cout << "------------End Waiting-----------" << std::endl;
                 isWaiting = false;
             }
@@ -65,7 +68,8 @@ void Controller_AI_KevinDill::playGame(std::vector<Entity *> allyMobs, std::vect
                 std::cout << "Decision: AI is waiting because he wants to wait until he has sufficient elixir." << std::endl;
                 return;
             }
-        }        
+            return;
+        }
     }
 
 
@@ -86,9 +90,9 @@ void Controller_AI_KevinDill::playGame(std::vector<Entity *> allyMobs, std::vect
               
                 // wait for enemy's action / attack
                 if (desireToAttack != 3) {
-                    int decision = rand() % 5;
+                    int decision = rand() % 6;
 
-                    if (decision >= 3) {
+                    if (decision >= 4) {
                         desireToAttack++;
                         std::cout << "Decision: Enhance this attack. Increase desire to attack since it is a good chance" << std::endl;
                     }
@@ -129,8 +133,8 @@ void Controller_AI_KevinDill::playGame(std::vector<Entity *> allyMobs, std::vect
             }
 
             if (getMobsThreatLevel(enemyMobs) - getMobsThreatLevel(allyMobs) > 2.5f) {
-                int decision = rand() % 5;
-                if (decision >= 2 && desireToAttack > 1) {
+                int decision = rand() % 6;
+                if (decision > 3 && desireToAttack > 1) {
                     desireToAttack--;
                     std::cout << "Decision: desire to attack decrease." << std::endl;
                 }
@@ -256,6 +260,8 @@ Controller_AI_KevinDill::normalAttack(const std::vector<Entity *> allyMobs, cons
     std::vector<Entity *> giants = getMobInCertainType(iEntityStats::Giant, allyMobs);
     std::vector<Entity *> swords = getMobInCertainType(iEntityStats::Swordsman, allyMobs);
     std::vector<Entity *> archers = getMobInCertainType(iEntityStats::Archer, allyMobs);
+    std::vector<Entity*> rogues = getMobInCertainType(iEntityStats::Rogue, allyMobs);
+
 
     if (m_pPlayer->getElixir() >= 5) {
         if (giants.empty()) {
@@ -275,8 +281,15 @@ Controller_AI_KevinDill::normalAttack(const std::vector<Entity *> allyMobs, cons
                        getMobsThreatLevel(
                                getMobsOnThisSide(m_pPlayer->isNorth(), allyMobs)) >= getMobsThreatLevel(
                                getMobsOnThisSide(m_pPlayer->isNorth(), enemyMobs))) {
-                placeMobInFront(iEntityStats::Giant, m_pPlayer->isNorth(),
-                                isPosOnLeft(allyMobs.front()->getPosition()));
+
+                if (rogues.size() >= 2) {
+                    placeMobInBot(iEntityStats::Giant, m_pPlayer->isNorth(),
+                        isPosOnLeft(rogues.front()->getPosition()));
+                }
+                else {
+                    placeMobInFront(iEntityStats::Giant, m_pPlayer->isNorth(),
+                        isPosOnLeft(allyMobs.front()->getPosition()));
+                }
             }
         }
     } else if (m_pPlayer->getElixir() >= 2) {
@@ -303,29 +316,34 @@ Controller_AI_KevinDill::passiveAttack(const std::vector<Entity *> allyMobs, con
     assert(m_pPlayer);
 
     std::vector<Entity *> giants = getMobInCertainType(iEntityStats::Giant, allyMobs);
+    std::vector<Entity*> rogues = getMobInCertainType(iEntityStats::Rogue, allyMobs);
 
-    if (getMobsThreatLevel(enemyMobs) <= 2) {
-        int decision = rand() % 2;
-        bool isLeft = decision == 1;
-
-        if (m_pPlayer->getElixir() > 5) {
-            placeMobInBot(iEntityStats::Rogue, m_pPlayer->isNorth(), isLeft);
+    if (getMobsThreatLevel(allyMobs) - getMobsThreatLevel(enemyMobs) > 3.f) {
+        if (m_pPlayer->getElixir() >= 5) {
+            if (getMobsThreatLevel(allyMobs) >= 3) {
+                if (giants.empty()) {
+                    if (rogues.size() >= 4) {
+                        placeMobInBot(iEntityStats::Giant, m_pPlayer->isNorth(), attackLeftSide());
+                    }
+                    else if (getMobsThreatLevel(allyMobs) - getMobsThreatLevel(rogues) >= 3){
+                        placeMobInFront(iEntityStats::Giant, m_pPlayer->isNorth(), attackLeftSide());
+                    }
+                }
+            }
         }
     }
+    else if (getMobsThreatLevel(enemyMobs) == 0) {
+        if (m_pPlayer->getElixir() > 7) {
+            std::cout << "reach here" << std::endl;
+            if (getMobsThreatLevel(enemyMobs) == 0) {
+                if (rogues.empty()) {
+                    int decision = rand() % 2;
+                    bool isLeft = decision == 1;
+                    placeMobInBot(iEntityStats::Rogue, m_pPlayer->isNorth(), isLeft);
+                }
+                else {
+                    placeMobInBot(iEntityStats::Rogue, m_pPlayer->isNorth(), isPosOnLeft(rogues.front()->getPosition()));
 
-    if (getMobsThreatLevel(allyMobs) >= getMobsThreatLevel(enemyMobs)) {
-        if (m_pPlayer->getElixir() >= 7) {
-            if (giants.empty()) {
-                placeMobInFront(iEntityStats::Giant, m_pPlayer->isNorth(), attackLeftSide());
-            }
-        } else if (m_pPlayer->getElixir() >= 5) {
-            int decision = rand() % 2;
-
-            if (giants.empty()) {
-                if (decision == 1) {
-                    placeMobInBot(iEntityStats::Giant, m_pPlayer->isNorth(), attackLeftSide());
-                } else {
-                    placeMobInFront(iEntityStats::Swordsman, m_pPlayer->isNorth(), attackLeftSide());
                 }
             }
         }
