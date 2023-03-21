@@ -97,6 +97,7 @@ private:
     // generate a random number in a range
     static float randomInRange(float lowerBound, float upperBound);
 
+    // place mob behind another mob within its attack range
     void gracefullyPlaceMob(iEntityStats::MobType placeMobType, Entity *enemy);
 
     // random helper
@@ -110,19 +111,33 @@ private:
     // get certain type of mob in a vector
     std::vector<Entity *> getMobInCertainType(iEntityStats::MobType mobType, const std::vector<Entity *>& mobs);
 
+    // returns whether one entity is behind another
     bool aBehindB(bool isNorth, Entity *mobA, Entity *mobB);
 
+    // get the closest mob to a position
     Entity* getClosestMob(std::vector<Entity* > mobs, Vec2 pos);
 
+    // evaluate the threat level of a group of mobs
     float getMobsThreatLevel(std::vector<Entity* > mobs);
 
+    // get the tolerance of the mob depends on the current strategy.
     float getThreatTolerance();
 
+    // decide whether attack the right side or the left side
     bool attackLeftSide();
 
+    // place the mob behind the bridge
     void placeMobInFront(iEntityStats::MobType mobType, bool isNorth, bool isLeft);
 
+    // place the mob behind the tower
     void placeMobInBot(iEntityStats::MobType mobType, bool isNorth, bool isLeft);
 
+    // return the position on left or right side of the map
     bool isPosOnLeft(Vec2 pos);
+
+    // get the mobs that will pass the bridge
+    std::vector<Entity*> getMobsWithinRange(bool isNorth, const std::vector<Entity*>& mobs);
+
+    // check whether the mob is on this side or opponent's side
+    static bool isWithinRange(bool isNorth, const Vec2& pos);
 };

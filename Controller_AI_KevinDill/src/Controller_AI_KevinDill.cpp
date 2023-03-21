@@ -212,9 +212,19 @@ Controller_AI_KevinDill::aggressiveAttack(const std::vector<Entity *> allyMobs, 
         }
 
         if (m_pPlayer->getElixir() >= 7) {
-            placeMobInFront(iEntityStats::Giant, m_pPlayer->isNorth(), attackLeftSide());
+            if (getMobsThreatLevel(enemyMobs) <= 5 && getMobsThreatLevel(enemyMobs) > 2) {
+                bool isLeft = isPosOnLeft(enemyMobs.front()->getPosition());
+                placeMobInFront(iEntityStats::Giant, m_pPlayer->isNorth(), isLeft);
+            } else if (getMobsThreatLevel(enemyMobs) <= 2) {
+                placeMobInFront(iEntityStats::Giant, m_pPlayer->isNorth(), attackLeftSide());
+            }
         } else if (m_pPlayer->getElixir() >= 5) {
-            placeMobInFront(iEntityStats::Swordsman, m_pPlayer->isNorth(), attackLeftSide());
+            if (getMobsThreatLevel(enemyMobs) <= 3 && getMobsThreatLevel(enemyMobs) > 0) {
+                bool isLeft = isPosOnLeft(enemyMobs.front()->getPosition());
+                placeMobInFront(iEntityStats::Swordsman, m_pPlayer->isNorth(), isLeft);
+            } else if (getMobsThreatLevel(enemyMobs) == 0) {
+                placeMobInFront(iEntityStats::Swordsman, m_pPlayer->isNorth(), attackLeftSide());
+            }
         }
     } else {
         bool isLeft = true;
@@ -354,7 +364,7 @@ void Controller_AI_KevinDill::defense(const std::vector<Entity *> &allyMobs, con
     assert(m_pPlayer);
 
     // get all the enemy mobs that pass the bridge
-    std::vector<Entity *> mobsPassBridge = getMobsOnThisSide(m_pPlayer->isNorth(), enemyMobs);
+    std::vector<Entity *> mobsPassBridge = getMobsWithinRange(m_pPlayer->isNorth(), enemyMobs);
 
     // get all mobs that needs extra defense
     std::vector<Entity *> mobsShouldTakeCare = getEnemyShouldTakeCare(mobsPassBridge);
@@ -707,6 +717,30 @@ void Controller_AI_KevinDill::placeMobInBot(iEntityStats::MobType mobType, bool 
 
 bool Controller_AI_KevinDill::isPosOnLeft(Vec2 pos) {
     return pos.x < BRIDGE_WIDTH / 2;
+}
+
+// get the mobs that will pass the bridge
+std::vector<Entity*> Controller_AI_KevinDill::getMobsWithinRange(bool isNorth, const std::vector<Entity*>& mobs) {
+    assert(m_pPlayer);
+
+    std::vector<Entity *> result = std::vector<Entity *>();
+
+    for (auto e: mobs) {
+        if (isWithinRange(m_pPlayer->isNorth(), e->getPosition())) {
+            result.push_back(e);
+        }
+    }
+
+    return result;
+}
+
+// check whether the mob is on this side or opponent's side
+bool Controller_AI_KevinDill::isWithinRange(bool isNorth, const Vec2& pos){
+    if (isNorth) {
+        return pos.y < RIVER_TOP_Y - 1.5f;
+    } else {
+        return pos.y > RIVER_BOT_Y + 1.5f;
+    }
 }
 
 
