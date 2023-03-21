@@ -29,6 +29,9 @@
 void Controller_AI_KevinDill::tick(float deltaTSec, const std::vector<Entity *> allyMobs,
                                    const std::vector<Entity *> enemyMobs) {
     assert(m_pPlayer);
+    srand(time(nullptr));
+
+    playGame(allyMobs, enemyMobs);
 
     // defense in random tick
     if (defenseCount >= defenseDuration) {
@@ -38,6 +41,99 @@ void Controller_AI_KevinDill::tick(float deltaTSec, const std::vector<Entity *> 
         defenseDuration = rand() % 20 + 15;
     } else {
         defenseCount++;
+    }
+}
+
+void Controller_AI_KevinDill::playGame(std::vector<Entity *> allyMobs, std::vector<Entity *> enemyMobs) {
+    assert(m_pPlayer);
+
+    if (isWaiting) {
+        // aggressive strategy waits for enough elixir
+        if (desireToAttack == 3) {
+            if (m_pPlayer->getElixir() < 7) {
+                return;
+            } else {
+                isWaiting = false;
+            }
+            // defensive strategy waits for enemy move
+        } else if (desireToAttack == 1) {
+            if (enemyMobs.empty()) {
+                return;
+            } else {
+                isWaiting = false;
+            }
+        } else {
+            if (m_pPlayer->getElixir() > 7) {
+                isWaiting = false;
+            } else {
+                return;
+            }
+
+            if (getMobsThreatLevel(getMobsOnThisSide(m_pPlayer->isNorth(), enemyMobs)) > getThreatTolerance()) {
+                isWaiting = true;
+            } else {
+                return;
+            }
+        }
+    }
+
+    // sufficient elixir
+    if (m_pPlayer->getElixir() >= 8) {
+        // if enemy low threat
+        if (getMobsThreatLevel(getMobsOnThisSide(m_pPlayer->isNorth(), enemyMobs)) <= getThreatTolerance() - 2) {
+            // low threat
+            if (getMobsThreatLevel(getMobsOnThisSide(m_pPlayer->isNorth(), allyMobs)) <= 2) {
+
+                // wait for enemy's action / attack
+                if (desireToAttack != 3) {
+                    desireToAttack++;
+                }
+
+                organizeAttacks(desireToAttack, allyMobs, enemyMobs);
+            } else {
+                organizeAttacks(desireToAttack, allyMobs, enemyMobs);
+            }
+        } else {
+            // aggressive strategy only cares about archers
+            if (desireToAttack == 3) {
+                std::vector<Entity *> archers = getMobInCertainType(iEntityStats::Archer, enemyMobs);
+                dealWithOneEnemy(allyMobs, enemyMobs, getHighestPriorityEnemy(archers));
+            } else {
+                defense(allyMobs, enemyMobs);
+            }
+        }
+    } else if (m_pPlayer->getElixir() < 3) {
+        // insufficient Elixir
+        if (desireToAttack == 3) {
+            isWaiting = true;
+        } else {
+            // if insufficient Elixir
+            if (getMobsThreatLevel(getMobsOnThisSide(m_pPlayer->isNorth(), enemyMobs)) <= getThreatTolerance() + 1) {
+                isWaiting = true;
+            } else {
+                defense(allyMobs, enemyMobs);
+                desireToAttack--;
+            }
+        }
+    } else {
+        // defense first, then organize attack
+        if (getMobsThreatLevel(getMobsOnThisSide(m_pPlayer->isNorth(), enemyMobs)) <= getThreatTolerance()) {
+            // low threat
+            if (getMobsThreatLevel(getMobsOnThisSide(m_pPlayer->isNorth(), allyMobs)) >= 3 &&
+                desireToAttack < 3) {
+                organizeAttacks(desireToAttack, allyMobs, enemyMobs);
+            } else if (desireToAttack == 3) {
+                organizeAttacks(desireToAttack - 1, allyMobs, enemyMobs);
+            }
+        } else {
+            // aggressive strategy only cares about archers
+            if (desireToAttack == 3) {
+                std::vector<Entity *> archers = getMobInCertainType(iEntityStats::Archer, enemyMobs);
+                dealWithOneEnemy(allyMobs, enemyMobs, getHighestPriorityEnemy(archers));
+            } else {
+                defense(allyMobs, enemyMobs);
+            }
+        }
     }
 }
 
@@ -78,7 +174,7 @@ void Controller_AI_KevinDill::defense(const std::vector<Entity *> &allyMobs, con
     assert(m_pPlayer);
 
     // get all the enemy mobs that pass the bridge
-    std::vector<Entity *> mobsPassBridge = getPassBridgeEnemies(m_pPlayer->isNorth(), enemyMobs);
+    std::vector<Entity *> mobsPassBridge = getMobsOnThisSide(m_pPlayer->isNorth(), enemyMobs);
 
     // get all mobs that needs extra defense
     std::vector<Entity *> mobsShouldTakeCare = getEnemyShouldTakeCare(mobsPassBridge);
@@ -90,19 +186,15 @@ void Controller_AI_KevinDill::defense(const std::vector<Entity *> &allyMobs, con
         Entity *e = getHighestPriorityEnemy(mobsShouldTakeCare);
         dealWithOneEnemy(allyMobs, enemyMobs, e);
     }
-
-//    for (auto e: mobsShouldTakeCare) {
-//        dealWithOneEnemy(allyMobs, e);
-//    }
 }
 
 std::vector<Entity *>
-Controller_AI_KevinDill::getPassBridgeEnemies(bool north, const std::vector<Entity *> &enemyMobs) {
+Controller_AI_KevinDill::getMobsOnThisSide(bool isNorth, const std::vector<Entity *> &mobs) {
     assert(m_pPlayer);
 
     std::vector<Entity *> result = std::vector<Entity *>();
 
-    for (auto e: enemyMobs) {
+    for (auto e: mobs) {
         if (isOnThisSide(m_pPlayer->isNorth(), e->getPosition())) {
             result.push_back(e);
         }
@@ -176,10 +268,6 @@ Controller_AI_KevinDill::dealWithOneEnemy(const std::vector<Entity *> &allyMobs,
             gracefullyPlaceMob(intToMob(seed), enemy);
             // noticeOnThisEnemy += 2;
         }
-        // if notice level enough, update treated enemy
-//        if (noticeOnThisEnemy >= enemy->getStats().getElixirCost()) {
-//            enemyTreated.insert(enemy);
-//        }
     }
 }
 
@@ -379,6 +467,26 @@ Entity *Controller_AI_KevinDill::getClosestMob(std::vector<Entity *> mobs, Vec2 
     return returnMob;
 }
 
+float Controller_AI_KevinDill::getMobsThreatLevel(std::vector<Entity *> mobs) {
+    float threatLevel = 0;
+
+    for (auto m: mobs) {
+        threatLevel += m->getStats().getElixirCost();
+    }
+
+    return threatLevel;
+}
+
+float Controller_AI_KevinDill::getThreatTolerance() {
+    switch (desireToAttack) {
+        case 1:
+            return 0;
+        case 2:
+            return 3;
+        case 3:
+            return 5;
+    }
+}
 
 
 

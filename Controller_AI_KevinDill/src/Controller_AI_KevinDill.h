@@ -42,9 +42,17 @@ public:
 private:
     int m_foo = 0;
 
+    // wait until high elixir has enemy higher than tolerance
+    bool isWaiting = false;
     int defenseCount = 0;
     int defenseDuration = 30;
+    int desireToAttack = 2;
+
+    // the enemy that already treated by AI, what if the enemy is in the list but no mobs nearby to deal with it?
     std::set<Entity*> enemyTreated = std::set<Entity*>();
+
+    // play the game with attacks and defense
+    void playGame(std::vector<Entity*> allyMobs, std::vector<Entity*> enemyMobs);
 
     // organize attacks module: 3 = very aggressive, 2 = medium, 1 = passive
     void organizeAttacks(int aggressiveLevel, std::vector<Entity*> allyMobs, std::vector<Entity*> enemyMobs);
@@ -73,7 +81,7 @@ private:
     void defense(const std::vector<Entity*>& allyMobs, const std::vector<Entity*>& enemyMobs);
 
     // get the mobs that will pass the bridge
-    std::vector<Entity*> getPassBridgeEnemies(bool north, const std::vector<Entity*>& enemyMobs);
+    std::vector<Entity*> getMobsOnThisSide(bool isNorth, const std::vector<Entity*>& mobs);
 
     // check whether the mob is on this side or opponent's side
     static bool isOnThisSide(bool isNorth, const Vec2& pos);
@@ -98,10 +106,14 @@ private:
     // giant far from tower > swordsman > giant far from tower
     Entity* getHighestPriorityEnemy(std::vector<Entity *> enemyMobs);
 
-    // get certain type of a mob in a vector
+    // get certain type of mob in a vector
     std::vector<Entity *> getMobInCertainType(iEntityStats::MobType mobType, const std::vector<Entity *>& mobs);
 
     bool aBehindB(bool isNorth, Entity *mobA, Entity *mobB);
 
     Entity* getClosestMob(std::vector<Entity* > mobs, Vec2 pos);
+
+    float getMobsThreatLevel(std::vector<Entity* > mobs);
+
+    float getThreatTolerance();
 };
