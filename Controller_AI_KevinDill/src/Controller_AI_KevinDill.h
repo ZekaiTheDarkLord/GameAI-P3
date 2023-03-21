@@ -116,4 +116,12 @@ private:
     float getMobsThreatLevel(std::vector<Entity* > mobs);
 
     float getThreatTolerance();
+
+    bool attackLeftSide();
+
+    void placeMobInFront(iEntityStats::MobType mobType, bool isNorth, bool isLeft);
+
+    void placeMobInBot(iEntityStats::MobType mobType, bool isNorth, bool isLeft);
+
+    bool isPosOnLeft(Vec2 pos);
 };

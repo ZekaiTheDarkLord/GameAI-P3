@@ -158,16 +158,119 @@ void Controller_AI_KevinDill::organizeAttacks(int aggressiveLevel, const std::ve
 void
 Controller_AI_KevinDill::aggressiveAttack(const std::vector<Entity *> allyMobs, const std::vector<Entity *> enemyMobs) {
     assert(m_pPlayer);
+
+    std::vector<Entity *> giants = getMobInCertainType(iEntityStats::Giant, allyMobs);
+    std::vector<Entity *> swords = getMobInCertainType(iEntityStats::Swordsman, allyMobs);
+    std::vector<Entity *> archers = getMobInCertainType(iEntityStats::Archer, allyMobs);
+
+    // if no giants exist,
+    // 1. if enough archer
+    // 2. place a giant or a swordsman in front of the bridge
+    if (giants.empty() && swords.empty()) {
+        if (archers.size() >= 2) {
+            if (m_pPlayer->getElixir() >= 2) {
+                placeMobInFront(iEntityStats::Archer, m_pPlayer->isNorth(), attackLeftSide());
+            }
+        }
+
+        if (m_pPlayer->getElixir() >= 7) {
+            placeMobInFront(iEntityStats::Giant, m_pPlayer->isNorth(), attackLeftSide());
+        } else if (m_pPlayer->getElixir() >= 5) {
+            placeMobInFront(iEntityStats::Swordsman, m_pPlayer->isNorth(), attackLeftSide());
+        }
+    } else {
+        bool isLeft = true;
+        if (!giants.empty()) {
+            isLeft = isPosOnLeft(giants.front()->getPosition());
+        } else {
+            isLeft = isPosOnLeft(giants.front()->getPosition());
+        }
+
+        if (m_pPlayer->getElixir() >= 2) {
+            placeMobInFront(iEntityStats::Archer, m_pPlayer->isNorth(), isLeft);
+        }
+    }
 }
 
 void
 Controller_AI_KevinDill::normalAttack(const std::vector<Entity *> allyMobs, const std::vector<Entity *> enemyMobs) {
     assert(m_pPlayer);
+
+    std::vector<Entity *> giants = getMobInCertainType(iEntityStats::Giant, allyMobs);
+    std::vector<Entity *> swords = getMobInCertainType(iEntityStats::Swordsman, allyMobs);
+    std::vector<Entity *> archers = getMobInCertainType(iEntityStats::Archer, allyMobs);
+
+    if (m_pPlayer->getElixir() >= 5) {
+        if (giants.empty()) {
+            if (swords.empty()) {
+                int decision = rand() % 6;
+                if (decision > 3) {
+                    placeMobInFront(iEntityStats::Swordsman, m_pPlayer->isNorth(), attackLeftSide());
+                }
+            } else {
+                placeMobInBot(iEntityStats::Archer, m_pPlayer->isNorth(),
+                              isPosOnLeft(swords.front()->getPosition()));
+            }
+
+            if (allyMobs.empty() && m_pPlayer->getElixir() > 7) {
+                placeMobInBot(iEntityStats::Giant, m_pPlayer->isNorth(), attackLeftSide());
+            } else if (!getMobsOnThisSide(m_pPlayer->isNorth(), allyMobs).empty() &&
+                       getMobsThreatLevel(
+                               getMobsOnThisSide(m_pPlayer->isNorth(), allyMobs)) >= getMobsThreatLevel(
+                               getMobsOnThisSide(m_pPlayer->isNorth(), enemyMobs))) {
+                placeMobInFront(iEntityStats::Giant, m_pPlayer->isNorth(),
+                                isPosOnLeft(allyMobs.front()->getPosition()));
+            }
+        }
+    } else if (m_pPlayer->getElixir() >= 3) {
+        if (!giants.empty()) {
+            if (isOnThisSide(m_pPlayer->isNorth(), giants.front()->getPosition())) {
+                int decision = rand() % 2;
+
+                if (decision == 1) {
+                    gracefullyPlaceMob(iEntityStats::Rogue, giants.front());
+                } else {
+                    gracefullyPlaceMob(iEntityStats::Archer, giants.front());
+                }
+            } else if (!swords.empty()) {
+                gracefullyPlaceMob(iEntityStats::Rogue, giants.front());
+            }
+        }
+    }
 }
 
 void
 Controller_AI_KevinDill::passiveAttack(const std::vector<Entity *> allyMobs, const std::vector<Entity *> enemyMobs) {
     assert(m_pPlayer);
+
+    std::vector<Entity *> giants = getMobInCertainType(iEntityStats::Giant, allyMobs);
+
+    if (getMobsThreatLevel(enemyMobs) <= 2) {
+        int decision = rand() % 2;
+        bool isLeft = decision == 1;
+
+        if (m_pPlayer->getElixir() > 5) {
+            placeMobInBot(iEntityStats::Rogue, m_pPlayer->isNorth(), isLeft);
+        }
+    }
+
+    if (getMobsThreatLevel(allyMobs) >= getMobsThreatLevel(enemyMobs)) {
+        if (m_pPlayer->getElixir() >= 7) {
+            if (giants.empty()) {
+                placeMobInFront(iEntityStats::Giant, m_pPlayer->isNorth(), attackLeftSide());
+            }
+        } else if (m_pPlayer->getElixir() >= 5) {
+            int decision = rand() % 2;
+
+            if (giants.empty()) {
+                if (decision == 1) {
+                    placeMobInBot(iEntityStats::Giant, m_pPlayer->isNorth(), attackLeftSide());
+                } else {
+                    placeMobInFront(iEntityStats::Swordsman, m_pPlayer->isNorth(), attackLeftSide());
+                }
+            }
+        }
+    }
 }
 
 void Controller_AI_KevinDill::defense(const std::vector<Entity *> &allyMobs, const std::vector<Entity *> &enemyMobs) {
@@ -486,6 +589,39 @@ float Controller_AI_KevinDill::getThreatTolerance() {
         case 3:
             return 5;
     }
+}
+
+bool Controller_AI_KevinDill::attackLeftSide() {
+    assert(m_pPlayer);
+
+    iPlayer::EntityData leftTower = m_pPlayer->getOpponentBuilding(1);
+    iPlayer::EntityData rightTower = m_pPlayer->getOpponentBuilding(2);
+
+    return leftTower.m_Health < rightTower.m_Health;
+}
+
+void Controller_AI_KevinDill::placeMobInFront(iEntityStats::MobType mobType, bool isNorth, bool isLeft) {
+    assert(m_pPlayer);
+
+    float placeX = isLeft ? LEFT_BRIDGE_CENTER_X : RIGHT_BRIDGE_CENTER_X;
+    float placeY = isNorth ? RIVER_TOP_Y - 0.5f : RIVER_BOT_Y + 0.5f;
+    Vec2 placePos = Vec2(placeX, placeY);
+
+    m_pPlayer->placeMob(mobType, placePos);
+}
+
+void Controller_AI_KevinDill::placeMobInBot(iEntityStats::MobType mobType, bool isNorth, bool isLeft) {
+    assert(m_pPlayer);
+
+    float placeX = isLeft ? LEFT_BRIDGE_CENTER_X : RIGHT_BRIDGE_CENTER_X;
+    float placeY = isNorth ? 0 + 0.5f : GAME_GRID_HEIGHT - 0.5f;
+    Vec2 placePos = Vec2(placeX, placeY);
+
+    m_pPlayer->placeMob(mobType, placePos);
+}
+
+bool Controller_AI_KevinDill::isPosOnLeft(Vec2 pos) {
+    return pos.x < BRIDGE_WIDTH / 2;
 }
 
 
