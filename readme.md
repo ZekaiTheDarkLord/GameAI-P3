@@ -1,19 +1,18 @@
-a.	How your solution works.
-My solusion works at a certain logic: 
-Fristly, the rogue mob will search for the enemies in sight. 
-If the mob is currently hidden and there is an enemy in sight, then it will try to spring attack it. Otherise, Rogue will move around giant or tower to hide from it. 
-If there is no enemies in sight, the rogue will stay and do nothing. 
-If the mob is curretly not hidden, it will first search for the enemies in sight, if there is some, go for it. Otherewise, the rogue will search for closest giant in sight as target. If there is no giants, the rogue will go back and hide under a tower. 
-For the moving around part of the rogue, I used an approach similar to what I have done to the project 1. The direction rogue hide will be the reverse direction to sum of all enemies toward the rogue. In order to keep the rogue remain a fixed hide distance to the shelter, after adding the vector and normalize it, it will also add a vector that points to the tower multiplies the distance from rogues's position after adjustment and the tower plus the hiding distance. At every tick when the rogue is currently hiding, the program will first check whether the rogue is spotted on any enemy that is on the rogue's sight, if there is some, continuesly let the rogue move and adjust its perspective. 
-For the other components, I simply change the moveVec and moveDist in the move function which sets rogue several target positions.
+Crash Loyal is a clone of a famous moble app game. This project is not to be
+used as a comercial product, simply as a teaching tool for 4150 Game AI.
 
-b.	Anything you did beyond what is described above (e.g. bringing in your collision code from project 1, tweaking constants, adjusting behavior for a better look and feel, etc.)
-I have move the collision code from project 1 in order to make all the moves of the mob seems more reasonable. And it seems works well with the logic of rogue. Also, I have adjust the hiding distance between rogue and giant or tower separately in order to make more reasonable. I sightly add more distance when rogue is hiding behind a tower so when we looking at a rogue with a tower, it will not appear a situation that the rogue is collide in the tower by steering force.  
+To build and run the project, open a terminal into this root directory and run
+the following command:
 
-c.	What parts you think work particularly well.
-One part I think works very well is the move around part. The rogue can hide and adjust its perspective from multiple entities as desired. And these hiding behavior actually make the rogue "hidden" and can let him prepare for his strong attack. In addition, the moving around will always keep the rogue in a constant velocity which he will not exceed its maximum speed. Also, when rogue cannot move around to hide multiple enemies in a very large angle, it will just go for the closest enemy. 
-Then, when rogue lose its shelter, it will smartly search for another shelter in the cloest range. All of these behavior make the rogue seems smart and perform functionality as his name suggests.
+g++.exe *.cpp -I./include/SDL2 -L./lib -w -lmingw32 -lSDL2main -lSDL2
+-lSDL2_image -o crashloyal
 
-d.	What things you wish you had time to improve.
-One thing I think I want to prove when the rogue is going to follow a building or a giant, when it gets close enough to it (preferGiantRange), it will immediately move to the side of the giant since it has begin to be influenced by the steering force of spotted enemies and move around the giant. This will make the move of the rogue not that smooth. However, somehow it creates a sense of feeling of rogue because of this little design. 
-Also, there are a bunch of repeated code and hacking when desining the logic which may influence the extensibility of the code. The special case of rogue in the base code of class mob also needs some edits. If I got time, I will improve and refactor the code structure. 
+This will generate an executable called 'crashloyal' (windows may make it an
+exe, linux or mac may not). The executable will initialize the game state
+world, a screen as well as begin scanning for use input.
+
+For more details on the graphics/ application library used please check out
+the SDL documentation: https://wiki.libsdl.org/FrontPage
+
+For some concrete examples on how to use SDL, please check out Lazy Foo:
+http://lazyfoo.net/tutorials/SDL/index.php
